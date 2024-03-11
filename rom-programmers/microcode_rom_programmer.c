@@ -2,22 +2,36 @@
 #include <string.h>
 
 /*
- * This is the program to generate the control code image for the Instruction Decoder(ID) ROM that controls the peripheral lines of our 8-bit CPU. The ID determines which control lines to manipulate and how  * to manipulate them using the CPU flags, instruction code and the micro-instruction step as its inputs. These inputs - 3 CPU flags, 4 instruction code bits and 3 micro-instruction step bits, totaling to 10 * bits determine the input for the ROM (address) for which the ROM spits out a control word stored at that address, which control turn on/off the 16 control lines.
+ * This is the program to generate the control code image for the Instruction Decoder(ID) 
+ * ROM that controls the peripheral lines of our 8-bit CPU. The ID determines which control 
+ * lines to manipulate and how  * to manipulate them using the CPU flags, instruction code 
+ * and the micro-instruction step as its inputs. These inputs - 3 CPU flags, 4 instruction 
+ * code bits and 3 micro-instruction step bits, totaling to 10 * bits determine the input 
+ * for the ROM (address) for which the ROM spits out a control word stored at that address, 
+ * which control turn on/off the 16 control lines.
  *
- * Let's take the LDI instruction as an example. This instruction loads an immediate value (the operand) to the A-Register and this is how it goes:
- * Clock-cycle 1: Output contents of program counter to bus and let the memory address register read it (PO | MI).
- * Clock-cycle 2: Output contents of RAM to bus and let the instruction register read it. Also increment the program counter for the next instruction (RO | II | PE).
- * Clock-cycle 3: Output the contents of the instruction register to bus (the four LSB) and let the A-Register read it (IO | AI).
+ * Let's take the LDI instruction as an example. This instruction loads an immediate value 
+ * (the operand) to the A-Register and this is how it goes:
+ * Clock-cycle 1: Output contents of program counter to bus and let the memory address 
+ * 			register read it (PO | MI).
+ * Clock-cycle 2: Output contents of RAM to bus and let the instruction register read it. 
+ * 			Also increment the program counter for the next instruction 
+ *			(RO | II | PE).
+ * Clock-cycle 3: Output the contents of the instruction register to bus (the four LSB) 
+ *			and let the A-Register read it (IO | AI).
  * Clock-cycle 4: Idle.
  * Clock-cycle 5: Idle.
  *
- * So, we'd want the aboe to steps to happen regardless of the status flags and when the instruction is LDI (0001), each step corresponding to each micro-instruction. So we'd have to program the ROM as follows:
+ * So, we'd want the aboe to steps to happen regardless of the status flags and when the 
+ * instruction is LDI (0001), each step corresponding to each micro-instruction. So we'd 
+ * have to program the ROM as follows:
  * NF | CF | ZF | INSTR | STEP |    ROM ADDRESS     |     CONTROL WORD    |
  *  0 |  0 |  0 | 0001  | 000  | 0000001000 = 0x008 | (PO|MI)    = 0x0050 |
  *  0 |  0 |  0 | 0001  | 010  | 0000001010 = 0x00A | (RO|II|PE) = 0x008C |
  *  0 |  0 |  0 | 0001  | 011  | 0000001011 = 0x00B | (IO|AI)    = 0x4002 |
  *
- * we also have to make copies of this for all possible combinations of the 3 flags. Therefore that's a total of 8 copies of the above instruction at different addresses.
+ * we also have to make copies of this for all possible combinations of the 3 flags. 
+ * Therefore that's a total of 8 copies of the above instruction at different addresses.
  *
  * Program is self-explanatory.
  */
