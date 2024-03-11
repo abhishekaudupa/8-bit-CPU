@@ -73,7 +73,6 @@ We now have the contents of the RAM at address 12 showing up in the A-Register.
 
 ## Schematic
 ![Schematic](./pictures/schematic.png)
-*I agree that this is not the most aesthetically pleasing diagram. With a decent amount of persistence, this circuit could be read and understood.*
 
 ## Instructions List
 This computer design has 12 instructions that could load values into registers, store values to RAM, add and subtract numbers, halt the computer altogether and make conditional and unconditional jumps. The instruction format is as follows: `xxxx yyyy`. `xxxx` is the instruction number and `yyyy` is the operand (which may or may not matter depending on the instruction).
