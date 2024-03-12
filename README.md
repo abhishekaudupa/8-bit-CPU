@@ -242,3 +242,42 @@ Program to count from 1, till a value stored in RAM, while displaying on the SSD
 | --- | --- |
 | 1110 | 0000 0001 (0x01) |
 | 1111 | 0011 1001 (0x39) |
+
+#### 3. Fibonacci Series
+Program to display Fibonacci Series less than 256.
+```
+0 OUT		//display the contents of A-Register.
+1 ADD 14	//Add contents of mem. loc. 14 to A-Register.
+2 JC  9		//If result overflows, jump to mem. loc. 9.
+3 STA 13	//Store contents of A-Reg. to mem. loc. 13.
+4 LDA 15	//Load contents of mem. loc. 15 to A-Reg.
+5 STA 14	//Store contents of A-Reg. to mem. loc. 14.
+6 LDA 13	//Load contents of mem. loc. 15 to A-Reg.
+7 STA 15	//Store contents of A-Reg. to mem. loc. 13.
+8 JMP 0		//Jump back to mem. loc. 0.
+9 HLT		//Stop computer.
+.
+.
+.
+13		//used for temp. storage.
+14 1		//starting numbers.
+15 0		//starting numbers.
+```
+
+| RAM Address | Machine Code |
+| --- | --- |
+| 0000 | 1100 0000 (0xc0) |
+| 0001 | 0100 1110 (0x4e) |
+| 0010 | 1001 1001 (0x99) |
+| 0011 | 0011 1101 (0x3d) |
+| 0100 | 0010 1111 (0x2f) |
+| 0101 | 0011 1110 (0x3e) |
+| 0110 | 0010 1101 (0x2d) |
+| 0111 | 0011 1111 (0x3f) |
+| 1000 | 0111 0000 (0x70) |
+| 1001 | 0110 0000 (0x60) |
+
+| RAM Address | Data |
+| --- | --- |
+| 1110 | 0000 0001 (0x01) |
+| 1111 | 0000 0000 (0x00) |
