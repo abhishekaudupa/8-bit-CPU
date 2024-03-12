@@ -4,7 +4,7 @@ This project is a demonstration of how a barebones, but turing complete, 8-bit C
 Logisim files for this project could be found [here](./logisim-files/).
 
 ## Architecture
-![Architecture](./pictures/architecture.svg)
+![architecture](./pictures/architecture.svg)
 This design follows a single data/address bus scheme. All peripherals (registers, counters, RAM etc.) share data amongst themselves using this common bus. The control unit co-ordinates the data sharing between these peripherals.
 
 The CPU is made up of the following components:
@@ -68,11 +68,34 @@ Here's a complete walkthrough of how the LDA instruction works. LDA (instruction
 2. The ID makes the RAM output the contents in that address(0010 1100) to bus and the instruction register read the bus. We now have LDA 12 in the instrction register (0010 1100).
 3. The ID makes the instruction register output the operand (last 4 bits, 1100) to the bus and the MAR read the bus.
 4. The ID makes the RAM output the contents(0011 0101, decimal 53) at the address given by MAR to the bus and the A-Register read the bus.
+We now have the contents of the RAM at address 12 showing up in the A-Register.
 
-We now have the contents of the RAM at address 12 showing up in the A-Register. 
+## Instruction Breakdown Table
+The table below illustrates how each instruction is broken down into a micro-instructions and which micro-instruction is exected in a given clock cycle.
+![instr-breakdown-table](./pictures/instruction-breakdown)
+
+**Legend**<br>
+ST - Clock Stop <br>
+AI - A-Register In <br>
+AO - A-Register Out <br>
+BI - B-Register In <br>
+DO - Display Register In <br>
+EO - ALU Out <br>
+SU - Subtract Enable <br>
+RI - RAM In <br>
+RO - RAM Out <br>
+MI - Memory Address Register In <br>
+PI - Program Counter In <br>
+PO - Program Counter Out <br>
+PE - Program Counter Enable <br>
+II - Instruction Register In <br>
+IO - Instruction Register Out <br>
+FI - CPU Flags Register In
+
+**Note** : Instructions JC, JZ and JN behave identical to NOP when their corresponding flags aren't set. Otherwise they behave identical to JMP.
 
 ## Schematic
-![Schematic](./pictures/schematic.png)
+![schematic](./pictures/schematic.png)
 
 ## Instructions List
 This computer design has 12 instructions that could load values into registers, store values to RAM, add and subtract numbers, halt the computer altogether and make conditional and unconditional jumps. The instruction format is as follows: `xxxx yyyy`. `xxxx` is the instruction number and `yyyy` is the operand (which may or may not matter depending on the instruction).
