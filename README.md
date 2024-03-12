@@ -72,7 +72,7 @@ We now have the contents of the RAM at address 12 showing up in the A-Register.
 
 ## Instruction Breakdown Table
 The table below illustrates how each instruction is broken down into a micro-instructions and which micro-instruction is exected in a given clock cycle.
-![instr-breakdown-table](./pictures/instruction-breakdown)
+![instr-breakdown-table](./pictures/instruction-breakdown.png)
 
 **Legend**<br>
 ST - Clock Stop <br>
