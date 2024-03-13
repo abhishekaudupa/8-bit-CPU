@@ -1,7 +1,7 @@
 # 8-bit CPU
 This project is a demonstration of how a barebones, but turing complete, 8-bit CPU works at the logic gate/register level, demonstrated using [Logisim](https://github.com/logisim-evolution/logisim-evolution). This project was motivated by [Ben Eater](https://www.youtube.com/@BenEater) and the [video series](https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU) produced by him where he builds an 8-bit CPU on breadboards.
 
-Logisim files for this project could be found [here](./logisim-files/).
+Logisim file for this project could be found [here](./logisim-files/).
 
 ## Architecture
 ![architecture](./pictures/architecture.svg)
@@ -30,13 +30,13 @@ This is a 4-bit binary counter and it counts from 0 to 15 which supplies the mem
 This is a 4-bit register connected directly to the main memory(RAM) and which supplies the RAM with the memory address from which data is to be read or into which data is to be written in the next clock cycle. User can load data from or store data into any location within the RAM using the supplied instructions.
 
 #### 8. RAM
-Being the main memory of the CPU, it stores the program code and the program data. The RAM for this computer is 16 bytes in size, which I do agree is *very* limited, but more than sufficient for the purpose at hand: demonstrating the working of a computer.
+Being the main memory of the CPU, it stores the program code and the program data. The RAM for this computer is 16 bytes in size, which is *very* limited, but more than sufficient for the purpose at hand: demonstrating the working of a computer.
 
 #### 9. Instruction Register
 This is an 8-bit register which stores the current instruction under exection. The four MSB bits encode the instruction itself and the remaining bits is the operand for the instruction. This register takes in 8 bits of data from the bus and relays back only the four LSB (operand) back to the bus. The four MSB bits goes to the instruction decoder.
 
 #### 10. Control Unit
-As the name suggests, this is what controls and coordinates actions between all peripherals of the CPU. The control unit acts as the bus master and dictates which peripheral spits data out onto the bus and which peripherals consume data from the bus as required by the instruction currently under execution. The control unit is comprised of two elements:
+As the name suggests, this controls and coordinates actions between all peripherals of the CPU. The control unit acts as the bus master and dictates which peripheral spits data out onto the bus and which peripherals consume data from the bus as required by the instruction currently under execution. The control unit is comprised of two elements:
 1. Micro-Instruction Counter : Each instruction for this CPU is comprised of a series of micro-instructions, each of which is executed per clock cycle. This counter keeps track of micro-instruction under execution.
 2. Instruction Decoder : This is an EEPROM which takes in data from the flags register, instruction register and the micro-instruction counter and maps this data in to what is called as a *Contol Word*, which is 16-bits long. Each bit of this control word controls a peripheral in a certain way that enables the control unit to do its job.
 
@@ -58,41 +58,41 @@ Each instruction for this computer is an 8-bit wide binary number. The four MSB 
 Program execution starts with the fetch cycle, comprising of two steps and then followed by the execution of the actual instruction:
 1. *Fetch*: The contents of the program counter are thrown out onto the bus and is picked up by the memory address register. This happens in the first clock cycle of fetch routine. 
 2. *Fetch*: In the next clock cycle, the contents of the RAM, at the address given by the memory address register, is thrown onto the bus which is picked by the instruction register and the program counter is incremented by one count. Now we have the instruction in our instruction register and that is the end of the fetch routine.
-3. *Execute*: In the next clock cycle, the instruction's operand is thrown onto the bus and is picked by the relevant peripheral. This happens only if the instruction has an operand. Otherwise someother course of action ensues, depending on the instruction. Example: for the instruction **LDI**, the Load Immediate instruction which loads a 4-bit value into the A-register, the operand is put on the bus which is picked by the A-Register and that is the end of the LDI instruction. Similarly, for the instruction **HLT**, the Clock Halt instruction, which takes no operand, the clock halt line is enabled and that is the end of the HLT instruction.
+3. *Execute*: In the next clock cycle, the instruction's operand is thrown onto the bus and is picked by the relevant peripheral. This happens only if the instruction has an operand. Otherwise someother course of action ensues, depending on the instruction. Example: for the instruction `LDI`, the Load Immediate instruction which loads a 4-bit value into the A-register, the operand is put on the bus which is picked by the A-Register and that is the end of the `LDI` instruction. Similarly, for the instruction `HLT`, the Clock Halt instruction, which takes no operand, the clock halt line is enabled and that is the end of the `HLT` instruction.
 4. *Execute*: The exection will go on for clock cycle four and five, thereby making every instruction five cycles long. Not all instructions need five cycles: the shortest of them complete in three cycles and do nothing in the fourth and fifth cycle. The longest of them use up all five cycles. The shorter ones haven't been optimzed because optimisation is not the intent of this project.
 
 Actions like the program counter outputting its value onto the bus, the instruction register picking up a value from the bus etc. are co-ordinated by the control unit, which has an instruction decoder EEPROM that has been programmed to output certain bit petterns which activate peripheral control lines depending on the instruction under execution, the sub-step of that instruction (the five steps above) and the CPU flags(if we're executing conditional jumps). The sub-step is tracked by the micro-instruction counter of the control unit.
 
-Here's a complete walkthrough of how the LDA instruction works. LDA (instruction no. 2) takes an operand - it reads the value stored in the RAM address given by the operand and loads it into the A-Register. Here's how the micro-instruction works for LDA 12 (machine code: 0010 1100, load the contents of RAM at address 12 into the A-Register). The RAM has been programmed with LDA 12 (0010 1100) in address 0000 (only one instruction) and 0011 0101 (decimal 53) in address 1100(decimal 12).
+Here's a complete walkthrough of how the `LDA` instruction works. `LDA` (instruction no. 2) takes an operand - it reads the value stored in the RAM address given by the operand and loads it into the A-Register. Here's how the micro-instruction works for `LDA 12` (machine code: `0010 1100`, load the contents of RAM at address 12 into the A-Register). The RAM has been programmed with `LDA 12` (`0010 1100`) in address `0000` (only one instruction) and `0011 0101`(decimal 53) in address `1100`(decimal 12).
 1. The instruction decoder (ID) makes the program counter output the address(0000) onto the bus and the memory address register(MAR) read the bus.
-2. The ID makes the RAM output the contents in that address(0010 1100) to bus and the instruction register read the bus. We now have LDA 12 in the instrction register (0010 1100).
-3. The ID makes the instruction register output the operand (last 4 bits, 1100) to the bus and the MAR read the bus.
-4. The ID makes the RAM output the contents(0011 0101, decimal 53) at the address given by MAR to the bus and the A-Register read the bus.
+2. The ID makes the RAM output the contents in that address(`0010 1100`) to bus and the instruction register read the bus. We now have `LDA 12` in the instrction register (`0010 1100`).
+3. The ID makes the instruction register output the operand (last 4 bits, `1100`) to the bus and the MAR read the bus.
+4. The ID makes the RAM output the contents(`0011 0101`, decimal 53) at the address given by MAR to the bus and the A-Register read the bus.
 We now have the contents of the RAM at address 12 showing up in the A-Register.
 
 ## Instruction Breakdown Table
-The table below illustrates how each instruction is broken down into a micro-instructions and which micro-instruction is exected in a given clock cycle.
+The table below illustrates how each instruction is broken down into micro-instructions and which micro-instruction is executed in a given clock cycle.
 ![instr-breakdown-table](./pictures/instruction-breakdown.png)
 
 **Legend**<br>
-ST - Clock Stop <br>
-AI - A-Register In <br>
-AO - A-Register Out <br>
-BI - B-Register In <br>
-DO - Display Register In <br>
-EO - ALU Out <br>
-SU - Subtract Enable <br>
-RI - RAM In <br>
-RO - RAM Out <br>
-MI - Memory Address Register In <br>
-PI - Program Counter In <br>
-PO - Program Counter Out <br>
-PE - Program Counter Enable <br>
-II - Instruction Register In <br>
-IO - Instruction Register Out <br>
-FI - CPU Flags Register In
+`ST` - Clock Stop <br>
+`AI` - A-Register In <br>
+`AO` - A-Register Out <br>
+`BI` - B-Register In <br>
+`DO` - Display Register In <br>
+`EO` - ALU Out <br>
+`SU` - Subtract Enable <br>
+`RI` - RAM In <br>
+`RO` - RAM Out <br>
+`MI` - Memory Address Register In <br>
+`PI` - Program Counter In <br>
+`PO` - Program Counter Out <br>
+`PE` - Program Counter Enable <br>
+`II` - Instruction Register In <br>
+`IO` - Instruction Register Out <br>
+`FI` - CPU Flags Register In
 
-**Note** : Instructions JC, JZ and JN behave identical to NOP when their corresponding flags aren't set. Otherwise they behave identical to JMP.
+**Note** : Instructions `JC`, `JZ` and `JN` behave identical to `NOP` when their corresponding flags aren't set. Otherwise they behave identical to `JMP`.
 
 ## Schematic
 ![schematic](./pictures/schematic.png)
@@ -100,73 +100,73 @@ FI - CPU Flags Register In
 ## Instructions List
 This computer design has 12 instructions that could load values into registers, store values to RAM, add and subtract numbers, halt the computer altogether and make conditional and unconditional jumps. The instruction format is as follows: `xxxx yyyy`. `xxxx` is the instruction number and `yyyy` is the operand (which may or may not matter depending on the instruction).
 
-#### 1. LDI
+#### 1. `LDI`
 **Instruction Number**: 1 (0001) <br>
 **Operand**: Required <br>
 **Machine Code**: `0001 xxxx`. `xxxx` is the value which is to be loaded into the A-Register. <br>
 **Function**: Loads the value given by the *operand* into A-Register. <br>
 
-#### 2. LDA
+#### 2. `LDA`
 **Instruction Number**: 2 (0010) <br>
 **Operand**: Required <br>
 **Machine Code**: `0010 xxxx`. `xxxx` is the RAM address from which the value is loaded into the A-Register. <br>
 **Function**: Loads the value at the RAM address given by the *operand* into A-Register. <br>
 
-#### 3. STA
+#### 3. `STA`
 **Instruction Number**: 3 (0011) <br>
 **Operand**: Required <br>
 **Machine Code**: `0011 xxxx`. `xxxx` is the RAM address into which the value is in the A-Register is stored. <br>
 **Function**: Stores value in the A-Register in the RAM address given by the *operand*. <br>
 
-#### 4. ADD
+#### 4. `ADD`
 **Instruction Number**: 4 (0100) <br>
 **Operand**: Required <br>
 **Machine Code**: `0100 xxxx`. `xxxx` is the RAM address, the value at which is added with the value in the A-Register. <br>
 **Function**: Adds the value in the RAM address given by the *operand* into the value in the A-Register and stores the sum in the A-Register. This updates the carry flag, negative flag and the zero flag of the CPU Flags Register.<br>
 
-#### 5. SUB
+#### 5. `SUB`
 **Instruction Number**: 5 (0101) <br>
 **Operand**: Required <br>
 **Machine Code**: `0101 xxxx`. `xxxx` is the RAM address, the value at which is subtracted from the value in the A-Register. <br>
 **Function**: Subtracts the value in the RAM address given by the *operand* from the value in the A-Register and stores the difference in the A-Register. This updates the carry flag, negative flag and the zero flag of the CPU Flags Register.<br>
 
-#### 6. HLT
+#### 6. `HLT`
 **Instruction Number**: 6 (0110) <br>
 **Operand**: Don't Care <br>
 **Machine Code**: `0110 xxxx`. `xxxx` could be any value and is ignored. <br>
 **Function**: Halts the computer's clock module and therefore halts the program execution on the computer. <br> 
 
-#### 7. JMP
+#### 7. `JMP`
 **Instruction Number**: 7 (0111) <br>
 **Operand**: Required <br>
 **Machine Code**: `0111 xxxx`. `xxxx` is the RAM address to which the program execution of the next instruction is redirected to. <br>
 **Function**: This is an unconditional jump instruction which sets the program counter value with the value given by the *operand* and thereby makes the program jump to the user given location in the next instruction cycle. <br> 
 
-#### 8. NOP
+#### 8. `NOP`
 **Instruction Number**: 8 (1000) <br>
 **Operand**: Don't Care <br>
 **Machine Code**: `1000 xxxx`. `xxxx` could be any value and is ignored. <br>
 **Function**: This does nothing aka just makes the machine idle. 
 
-#### 9. JC
+#### 9. `JC`
 **Instruction Number**: 9 (1001) <br>
 **Operand**: Required <br>
 **Machine Code**: `1001 xxxx`. `xxxx` is the RAM address to which the program execution of the next instruction is redirected to. <br>
 **Function**: This is an conditional jump instruction which sets the program counter value with the value given by the *operand* and thereby makes the program jump to the user given location in the next instruction cycle, if the carry flag was set by the previous arithmetic operation. <br> 
 
-#### 10. JZ
+#### 10. `JZ`
 **Instruction Number**: 10 (1010) <br>
 **Operand**: Required <br>
 **Machine Code**: `1010 xxxx`. `xxxx` is the RAM address to which the program execution of the next instruction is redirected to. <br>
 **Function**: This is an conditional jump instruction which sets the program counter value with the value given by the *operand* and thereby makes the program jump to the user given location in the next instruction cycle, if the zero flag was set by the previous arithmetic operation. <br>
 
-#### 11. JN
+#### 11. `JN`
 **Instruction Number**: 11 (1011) <br>
 **Operand**: Required <br>
 **Machine Code**: `1011 xxxx`. `xxxx` is the RAM address to which the program execution of the next instruction is redirected to. <br>
 **Function**: This is an conditional jump instruction which sets the program counter value with the value given by the *operand* and thereby makes the program jump to the user given location in the next instruction cycle, if the negative flag was set by the previous arithmetic operation. <br> 
 
-#### 12. OUT
+#### 12. `OUT`
 **Instruction Number**: 12 (1100) <br>
 **Operand**: Don't Care <br>
 **Machine Code**: `1100 xxxx`. `xxxx` could be any value and is ignored. <br>
